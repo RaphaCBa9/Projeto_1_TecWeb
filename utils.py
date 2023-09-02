@@ -42,3 +42,10 @@ def load_template(filename: str):
     with open("templates/" + filename, "r") as file:
         return file.read()
     pass
+
+
+def build_response(body="", code=200, reason="OK", headers=""):
+    "Retorna a resposta do servidor"
+    if headers == "":
+        headers = "Content-Type: text/html; charset=utf-8"
+    return (f"HTTP/1.1 {code} {reason}\n{headers}\n\n{body}").encode("utf-8")
