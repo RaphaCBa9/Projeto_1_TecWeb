@@ -16,7 +16,7 @@ class Database:
 
     def get(self, note_id):
         cursor = self.conn.cursor()
-        cursor.execute("SELECT id, title, content FROM note WHERE id = ?", (note_id,))
+        cursor.execute("SELECT id, title, content FROM notes WHERE id = ?", (note_id,))
         row = cursor.fetchone()
         note = Note(id=row[0], title=row[1], content=row[2])
         return note

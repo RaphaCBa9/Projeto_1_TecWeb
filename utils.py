@@ -3,7 +3,10 @@ import json
 
 
 def extract_route(request):
-    return request.split()[1].lstrip("/")
+    if len(request.split()) > 1:
+        return request.split()[1][1:]
+
+    return ""
 
 
 def read_file(path: Path):

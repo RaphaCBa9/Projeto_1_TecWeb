@@ -3,33 +3,32 @@ from database import Database
 from database import Note
 from urllib.parse import unquote_plus
 
-database = Database("notes")
+db = Database("notes")
 
 
 def delete(request):
-    request = request.replace("\r", "")
-    body = request.split("\n\n")[1]
-    note_id = body.split("=")[1]
+    request = request.replace("\r", "")  # Remove caracteres indesejados
+    partes = request.split("\n\n")
+    corpo = partes[1]
+    note_id = corpo.split("=")[1]
 
-    database.delete(note_id)
-    response = build_response(code=303, headers="Location: /")
+    db.delete(note_id)
 
-    return response
+    return build_response(code=303, headers="Location: /")
 
 
 def edit(request):
     request = request.replace("\r", "")  # Remove caracteres indesejados
     partes = request.split("\n\n")
     corpo = partes[1]
-    print(corpo)
-    note_id = corpo.split("=")[1]
-    note = database.get(note_id)
-    response = build_response(
+    print(partes, corpo)
+    note_id = corpo.split("=")[0]
+    note = db.get(note_id)
+    return build_response(
         body=load_template("edit.html").format(
             id=note.id, title=note.title, content=note.content
         )
     )
-    return response
 
 
 def update(request):
@@ -39,15 +38,12 @@ def update(request):
     note_id = corpo.split("&")[0].split("=")[1]
     title = unquote_plus(corpo.split("&")[1].split("=")[1])
     content = unquote_plus(corpo.split("&")[2].split("=")[1])
-    database.update(Note(id=note_id, title=title, content=content))
-
-    response = build_response(code=303, reason="See Other", headers="Location: /")
-    return response
+    db.update(Note(id=note_id, title=title, content=content))
+    return build_response(code=303, reason="See Other", headers="Location: /")
 
 
 def not_found(request):
-    response = build_response(code=404, body=load_template("not_found.html"))
-    return response
+    return build_response(code=404, body=load_template("404.html"))
 
 
 def index(request):
@@ -70,9 +66,8 @@ def index(request):
             elif chave == "detalhes":
                 itens[1] = unquote_plus(valor)
 
-        database.add(Note(title=itens[0], content=itens[1]))
-        response = build_response(code=303, reason="See Other", headers="Location: /")
-        return response
+        db.add(Note(title=itens[0], content=itens[1]))
+        return build_response(code=303, reason="See Other", headers="Location: /")
 
     # Cria uma lista de <li>'s para cada anotação
     # Se tiver curiosidade: https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions
@@ -85,12 +80,11 @@ def index(request):
 
     return build_response(body=load_template('index.html').format(notes=notes))"""
 
-    notes = database.get_all()
+    notes = db.get_all()
     note_template = load_template("components/note.html")
     notes_li = [
         note_template.format(title=note.title, details=note.content, id=note.id)
         for note in notes
     ]
     notes = "\n".join(notes_li)
-    response = build_response(body=load_template("index.html").format(notes=notes))
-    return response
+    return build_response(body=load_template("index.html").format(notes=notes))

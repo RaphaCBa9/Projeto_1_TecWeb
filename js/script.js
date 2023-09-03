@@ -4,7 +4,6 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-const canvas = document.querySelectorAll('.card-canvas');
 const corpo = document.querySelector('body');
 const appbar = document.querySelector('.appbar');
 const notas = document.querySelectorAll('.card');
@@ -17,35 +16,6 @@ const titulo_formulario = document.querySelector('.form-card-title');
 const formAutoresize = document.querySelector('.autoresize');
 const nightmode = document.querySelector('#night-mode-toggle');
 
-canvas.forEach(canvas => {
-    const context = canvas.getContext('2d');
-    let isDrawing = false;
-    let lastX = 0;
-    let lastY = 0;
-
-    canvas.addEventListener('mousedown', e => {
-        isDrawing = true;
-        [lastX, lastY] = [e.offsetX, e.offsetY];
-    });
-
-    canvas.addEventListener('mousemove', e => {
-        if (isDrawing) {
-            context.beginPath();
-            context.moveTo(lastX, lastY);
-            context.lineTo(e.offsetX, e.offsetY);
-            context.stroke();
-            [lastX, lastY] = [e.offsetX, e.offsetY];
-        }
-    });
-
-    canvas.addEventListener('mouseup', () => {
-        isDrawing = false;
-    });
-
-    canvas.addEventListener('mouseout', () => {
-        isDrawing = false;
-    });
-});
 
 const NIGHT_MODE_KEY = 'night-mode';
 
